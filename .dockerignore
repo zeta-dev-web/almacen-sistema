@@ -9,7 +9,6 @@ node_modules
 Dockerfile
 docker-compose.yml
 README.md
-tsconfig.json
 eslint.config.mjs
 .prettierrc
 .vscode
