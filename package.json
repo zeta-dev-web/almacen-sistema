@@ -2,7 +2,7 @@
   "name": "generic-next",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "next dev -p 3000 -H 0.0.0.0",
     "dev:webpack": "next dev -p 3000 -H 0.0.0.0",
@@ -17,7 +17,7 @@
     "studio": "prisma studio"
   },
   "prisma": {
-    "seed": "yarn tsx prisma/seed.ts"
+    "seed": "pnpm tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^4.0.0",
