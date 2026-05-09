@@ -15,4 +15,3 @@ eslint.config.mjs
 .vscode
 .idea
 *.md
-docker-entrypoint.sh

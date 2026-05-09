@@ -41,20 +41,20 @@ jobs:
             EOF
             
             echo "🐳 Deteniendo contenedores anteriores..."
-            docker-compose down || true
+            docker compose down || true
             
             echo "🏗️  Construyendo nueva imagen..."
-            docker-compose build --no-cache
+            docker compose build --no-cache
             
             echo "🚀 Levantando contenedores..."
-            docker-compose up -d
+            docker compose up -d
             
             echo "🧹 Limpiando imágenes antiguas..."
             docker image prune -f
             
             echo "✅ Despliegue completado!"
             echo "📊 Estado de los contenedores:"
-            docker-compose ps
+            docker compose ps
             
             echo "📝 Últimos logs:"
-            docker-compose logs --tail=50 app
+            docker compose logs --tail=50 app
