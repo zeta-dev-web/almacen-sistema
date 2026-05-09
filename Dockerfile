@@ -7,7 +7,7 @@ WORKDIR /app
 FROM base AS deps
 RUN corepack enable yarn
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --network-timeout 100000
 
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1

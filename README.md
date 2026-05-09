@@ -18,7 +18,7 @@ Una base sólida y reutilizable para proyectos Next.js, diseñada con los más a
 | **HTTP Client** | Axios |
 | **Validación** | Zod |
 | **Notificaciones** | Sonner |
-| **Package Manager** | pnpm |
+| **Package Manager** | yarn |
 
 ## ✨ Características Principales
 
@@ -83,18 +83,18 @@ clientErrorHandler(error, callback, {
 
 ```bash
 # Desarrollo
-pnpm dev              # Inicia servidor en puerto 3000
+yarn dev              # Inicia servidor en puerto 3000
 
 # Base de datos
-pnpm migrate          # Crea y aplica migración
-pnpm migrate:deploy   # Aplica migraciones en producción
-pnpm reset            # Resetea la base de datos
-pnpm studio           # Abre Prisma Studio
+yarn migrate          # Crea y aplica migración
+yarn migrate:deploy   # Aplica migraciones en producción
+yarn reset            # Resetea la base de datos
+yarn studio           # Abre Prisma Studio
 
 # Código
-pnpm format           # Formatea con Prettier
-pnpm lint             # Ejecuta ESLint
-pnpm build            # Build de producción
+yarn format           # Formatea con Prettier
+yarn lint             # Ejecuta ESLint
+yarn build            # Build de producción
 ```
 
 ## 📋 Primeros Pasos
@@ -116,7 +116,7 @@ NEXT_PUBLIC_API_URL=""
 ### 2. Instalar Dependencias
 
 ```bash
-pnpm install
+yarn install
 ```
 
 ### 3. Configurar Base de Datos
@@ -126,10 +126,22 @@ pnpm prisma generate
 pnpm migrate dev --name init
 ```
 
-### 4. Iniciar Desarrollo
+### 4. Cargar Datos Iniciales (Seed)
 
 ```bash
-pnpm dev
+yarn tsx prisma/seed.ts
+```
+
+Esto creará:
+- **Usuario Admin**: username `admin`, PIN `123456`
+- Categorías de productos
+- Productos de ejemplo
+- Métodos de pago
+
+### 5. Iniciar Desarrollo
+
+```bash
+yarn dev
 ```
 
 Visita `http://localhost:3000`
