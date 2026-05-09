@@ -17,6 +17,9 @@ RUN corepack enable pnpm
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Debug: verificar que los archivos se copiaron
+RUN ls -la src/components/common/
+
 # Generar Prisma Client
 RUN pnpm prisma generate
 
