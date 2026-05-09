@@ -1,0 +1,9 @@
+@echo off
+echo Limpiando cache de Next.js...
+rmdir /s /q .next 2>nul
+echo.
+echo Configurando limite de memoria Node.js...
+set NODE_OPTIONS=--max-old-space-size=2048 --expose-gc
+echo.
+echo Iniciando servidor...
+yarn dev

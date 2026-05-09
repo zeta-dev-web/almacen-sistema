@@ -1,52 +1,31 @@
 import { prisma } from "@/lib/prisma";
+import { Employee, Prisma } from "@prisma/client";
 
-interface CreateUserDto {
-  name: string;
-  email: string;
-}
+type CreateEmployeeDto = Pick<Employee, "name" | "username" | "pinHash" | "role">;
 
-interface UpdateUserDto extends Partial<CreateUserDto> {}
-
-export const userRepository = {
-  async create(dto: CreateUserDto) {
-    return prisma.user.create({
-      data: dto,
-    });
+export const employeeRepository = {
+  async create(dto: CreateEmployeeDto) {
+    return prisma.employee.create({ data: dto });
   },
 
   async findById(id: string) {
-    return prisma.user.findUnique({
-      where: { id },
-    });
+    return prisma.employee.findUnique({ where: { id } });
   },
 
-  async findByEmail(email: string) {
-    return prisma.user.findUnique({
-      where: { email },
-    });
+  async findByUsername(username: string) {
+    return prisma.employee.findUnique({ where: { username } });
   },
 
-  async update(id: string, dto: UpdateUserDto) {
-    return prisma.user.update({
-      where: { id },
-      data: dto,
-    });
-  },
-
-  async delete(id: string) {
-    return prisma.user.delete({
-      where: { id },
-    });
+  async update(id: string, dto: Prisma.EmployeeUpdateInput) {
+    return prisma.employee.update({ where: { id }, data: dto });
   },
 
   async findAll(search?: string) {
     const where = search
-      ? {
-          OR: [{ name: { contains: search } }, { email: { contains: search } }],
-        }
+      ? { OR: [{ name: { contains: search } }, { username: { contains: search } }] }
       : {};
 
-    return prisma.user.findMany({
+    return prisma.employee.findMany({
       where,
       orderBy: { createdAt: "desc" },
     });

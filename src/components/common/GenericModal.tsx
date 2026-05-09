@@ -13,7 +13,6 @@ interface GenericModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl";
-  variant?: "default" | "dark";
 }
 
 const SIZE_CLASSES = {
@@ -25,6 +24,18 @@ const SIZE_CLASSES = {
   "4xl": "max-w-4xl",
 };
 
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
+  visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 30 } },
+  exit: { opacity: 0, scale: 0.95, y: 20, transition: { type: "spring" as const, stiffness: 300, damping: 30 } },
+};
+
+const backdropVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+};
+
 export function GenericModal({
   open,
   onOpenChange,
@@ -33,57 +44,8 @@ export function GenericModal({
   children,
   footer,
   size = "md",
-  variant = "default",
 }: GenericModalProps) {
-  const isDark = variant === "dark";
   const shouldReduceMotion = useReducedMotion();
-
-  const bgClass = isDark ? "bg-onyx" : "bg-neutral-950";
-  const headerBgClass = isDark ? "bg-neutral-950" : "bg-neutral-900";
-  const footerBgClass = isDark ? "bg-neutral-950" : "bg-neutral-900";
-  const contentBgClass = isDark ? "bg-onyx" : "bg-neutral-950";
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 20 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-      y: 20,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-  };
-
-  const backdropVariants = {
-    hidden: { opacity: 0, backdropBlur: 0 },
-    visible: {
-      opacity: 1,
-      backdropBlur: 4,
-      transition: {
-        duration: 0.2,
-      },
-    },
-    exit: {
-      opacity: 0,
-      backdropBlur: 0,
-      transition: {
-        duration: 0.2,
-      },
-    },
-  };
 
   return (
     <AnimatePresence>
@@ -91,49 +53,30 @@ export function GenericModal({
         <>
           <motion.div
             variants={shouldReduceMotion ? undefined : backdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+            initial="hidden" animate="visible" exit="exit"
             onClick={() => onOpenChange(false)}
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
           />
           <motion.div
             variants={shouldReduceMotion ? undefined : modalVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+            initial="hidden" animate="visible" exit="exit"
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div
-              className={`${bgClass} border border-neutral-800 rounded-xl shadow-2xl ${SIZE_CLASSES[size]} w-full max-h-[90vh] overflow-y-auto pointer-events-auto`}
-            >
-              <div
-                className={`flex items-center justify-between p-6 border-b border-neutral-800 ${headerBgClass}`}
-              >
+            <div className={`bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-2xl ${SIZE_CLASSES[size]} w-full max-h-[90vh] overflow-y-auto pointer-events-auto`}>
+              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
-                    {title}
-                  </h2>
-                  {description && (
-                    <p className="text-sm text-neutral-400 mt-1">
-                      {description}
-                    </p>
-                  )}
+                  <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">{title}</h2>
+                  {description && <p className="text-sm mt-1 text-neutral-500 dark:text-neutral-400">{description}</p>}
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onOpenChange(false)}
-                  className="text-neutral-400 hover:text-white hover:bg-neutral-800"
-                >
+                <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800">
                   <Cancel01Icon size={20} />
                 </Button>
               </div>
-              <div className={`p-6 ${contentBgClass}`}>{children}</div>
+              <div className="p-6 bg-white dark:bg-neutral-950">
+                {children}
+              </div>
               {footer && (
-                <div
-                  className={`flex justify-end gap-2 p-6 border-t border-neutral-800 ${footerBgClass}`}
-                >
+                <div className="flex justify-end gap-2 p-6 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
                   {footer}
                 </div>
               )}
@@ -197,7 +140,7 @@ export function ConfirmModal({
         </>
       }
     >
-      <p className="text-sm text-neutral-400">{description}</p>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">{description}</p>
     </GenericModal>
   );
 }

@@ -62,7 +62,8 @@ export default function apiErrorHandler({
   let { status, message } = error;
   if (!error.isOperational) {
     status = httpStatus.INTERNAL_SERVER_ERROR;
-    message = fallbackMessage ?? statusMessages[httpStatus.INTERNAL_SERVER_ERROR];
+    message =
+      fallbackMessage ?? statusMessages[httpStatus.INTERNAL_SERVER_ERROR];
   }
   if (!message) message = fallbackMessage ?? statusMessages[status];
 

@@ -1,10 +1,10 @@
 import { AxiosError } from "axios";
-import { ExternalToast } from "sonner";
 import {
   toastSuccess,
   toastError,
   toastWarning,
   toastInfo,
+  ToastOptions,
 } from "@/utils/toast.util";
 import { ERROR_MESSAGES } from "@/constants/error-messages.constant";
 
@@ -13,7 +13,7 @@ interface HandlerOptions {
   showToast?: boolean;
   messagePrefix?: string;
   defaultMessage?: string;
-  toastOptions?: Partial<ExternalToast>;
+  toastOptions?: ToastOptions;
 }
 
 function normalizeError(error: unknown): Error {
@@ -36,8 +36,8 @@ function normalizeError(error: unknown): Error {
   if (typeof error === "string") return new Error(error);
 
   if (error && typeof error === "object") {
-    if ("message" in error && typeof (error as any).message === "string") {
-      return new Error((error as any).message);
+    if ("message" in error && typeof (error as { message: string }).message === "string") {
+      return new Error((error as { message: string }).message);
     }
     return new Error(JSON.stringify(error));
   }
@@ -54,7 +54,7 @@ export function clientErrorHandler(
     messagePrefix = "",
     defaultMessage = "Error desconocido",
     toastOptions = {},
-  }: HandlerOptions = {}
+  }: HandlerOptions = {},
 ): void {
   const normalizedError = normalizeError(error);
 
@@ -71,11 +71,10 @@ export function clientSuccessHandler(
   message: string,
   callback = () => {},
   {
-    logToConsole = false,
     showToast = true,
     messagePrefix = "",
     toastOptions = {},
-  }: Omit<HandlerOptions, "defaultMessage"> = {}
+  }: Omit<HandlerOptions, "defaultMessage"> = {},
 ): void {
   if (showToast) {
     toastSuccess(`${messagePrefix}${message}`, toastOptions);
@@ -92,7 +91,7 @@ export function clientWarningHandler(
     showToast = true,
     messagePrefix = "",
     toastOptions = {},
-  }: Omit<HandlerOptions, "defaultMessage"> = {}
+  }: Omit<HandlerOptions, "defaultMessage"> = {},
 ): void {
   if (logToConsole) console.warn(message);
   if (showToast) {
@@ -110,7 +109,7 @@ export function clientInfoHandler(
     showToast = true,
     messagePrefix = "",
     toastOptions = {},
-  }: Omit<HandlerOptions, "defaultMessage"> = {}
+  }: Omit<HandlerOptions, "defaultMessage"> = {},
 ): void {
   if (logToConsole) console.info(message);
   if (showToast) {

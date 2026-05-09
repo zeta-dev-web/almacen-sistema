@@ -1,16 +1,50 @@
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
+  POS: "/pos",
+  PRODUCTS: "/products",
+  CATEGORIES: "/categories",
+  SUPPLIERS: "/suppliers",
+  STOCK: "/stock",
+  STOCKMOVEMENTS: "/stockmovements",
+  SALES: "/sales",
+  PURCHASES: "/purchases",
+  CASHDRAWER: "/cashdrawer",
+  DASHBOARD: "/dashboard",
+  REPORTS: "/reports",
+  SETTINGS: "/settings",
 } as const;
 
 export const ROUTE_LABELS: Record<string, string> = {
-  "": "Inicio",
-  login: "Iniciar Sesión",
+  pos: "Punto de Venta",
+  products: "Productos",
+  categories: "Categorías",
+  suppliers: "Proveedores",
+  stock: "Stock",
+  stockmovements: "Movimientos",
+  sales: "Ventas",
+  purchases: "Compras",
+  cashdrawer: "Caja",
+  dashboard: "Dashboard",
+  reports: "Reportes",
+  settings: "Configuración",
 } as const;
 
 export const API_ROUTES = {
   AUTH: {
     SESSION: "/api/session",
+    LOGIN: "/api/auth/login",
+    LOGOUT: "/api/auth/logout",
   },
-  USERS: "/api/users",
+  PRODUCTS: "/api/products",
+  CATEGORIES: "/api/categories",
+  STOCK: "/api/stock",
+  STOCK_MOVEMENTS: "/api/stock/movements",
+  SALES: "/api/sales",
+  CASHDRAWER: "/api/cashdrawer",
+  SUPPLIERS: "/api/suppliers",
+  PURCHASES: "/api/purchases",
+  PAYMENT_METHODS: "/api/payment-methods",
+  EMPLOYEES: "/api/employees",
+  REPORTS: "/api/reports",
 } as const;

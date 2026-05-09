@@ -134,6 +134,55 @@ pnpm dev
 
 Visita `http://localhost:3000`
 
+## 🐳 Despliegue en Producción
+
+### Opción 1: Despliegue Automático con GitHub Actions (Recomendado)
+
+**Configuración en 5 minutos:**
+
+1. **Ejecuta el script de configuración en tu VPS:**
+   ```bash
+   wget https://raw.githubusercontent.com/tu-usuario/tu-repo/main/setup-vps.sh
+   chmod +x setup-vps.sh
+   ./setup-vps.sh
+   ```
+
+2. **Copia los secrets generados a GitHub:**
+   - Ve a tu repositorio → Settings → Secrets → Actions
+   - Agrega todos los secrets que el script te mostró
+
+3. **Haz push a main y listo:**
+   ```bash
+   git push origin main
+   ```
+
+**¡Tu aplicación se desplegará automáticamente!** 🚀
+
+📖 **Guía completa:** [DEPLOY.md](./DEPLOY.md)
+
+### Opción 2: Despliegue Manual con Docker
+
+```bash
+# En tu VPS
+git clone <tu-repo>
+cd generic-next
+cp .env.production.example .env.production
+# Edita .env.production con tus credenciales
+docker-compose up -d --build
+```
+
+📖 **Guía completa:** [DOCKER.md](./DOCKER.md)
+
+### Características del Despliegue
+
+- ✅ PostgreSQL en contenedor Docker
+- ✅ Migraciones automáticas al iniciar
+- ✅ Seed de datos inicial
+- ✅ Reinicio automático en caso de fallo
+- ✅ Volúmenes persistentes para la base de datos
+- ✅ Optimización de imagen con multi-stage build
+- ✅ Despliegue automático con GitHub Actions
+
 ## 🎨 Ejemplos de Uso
 
 ### DataTable Genérica

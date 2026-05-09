@@ -4,12 +4,265 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Role {
+  ADMIN
+  CASHIER
+}
+
+enum PaymentMethodType {
+  CASH
+  DIGITAL
+}
+
+enum CashDrawerStatus {
+  OPEN
+  CLOSED
+}
+
+enum TransactionType {
+  SALE
+  OPENING
+  CLOSING
+  EXPENSE
+  WITHDRAWAL
+  DEPOSIT
+}
+
+enum MovementType {
+  SALE
+  PURCHASE
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  RETURN
+  OPENING
+}
+
+enum SaleStatus {
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+model Employee {
+  id             String          @id @default(cuid())
+  name           String
+  username       String          @unique
+  pinHash        String
+  role           Role            @default(CASHIER)
+  isActive       Boolean         @default(true)
+  failedAttempts Int             @default(0)
+  lockedUntil    DateTime?
+  lastLoginAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  sales          Sale[]
+  transactions   Transaction[]
+  stockMovements StockMovement[]
+  cashDrawers    CashDrawer[]
+
+  @@map("employees")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  color       String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  barcode        String?         @unique
+  name           String
+  description    String?
+  price          Decimal
+  costPrice      Decimal
+  categoryId     String
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  category       Category        @relation(fields: [categoryId], references: [id])
+  stock          Stock?
+  saleItems      SaleItem[]
+  purchaseItems  PurchaseItem[]
+  stockMovements StockMovement[]
+  stockAlerts    StockAlert[]
+
+  @@map("products")
+}
+
+model Stock {
+  id        String  @id @default(cuid())
+  productId String  @unique
+  quantity  Int     @default(0)
+  minStock  Int     @default(5)
+  maxStock  Int?
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("stock")
+}
+
+model StockMovement {
+  id          String       @id @default(cuid())
+  productId   String
+  type        MovementType
+  quantity    Int
+  referenceId String?
+  description String?
+  createdAt   DateTime     @default(now())
+  createdById String
+  product     Product      @relation(fields: [productId], references: [id])
+  createdBy   Employee     @relation(fields: [createdById], references: [id])
+
+  @@index([createdAt])
+  @@index([productId])
+  @@map("stock_movements")
+}
+
+model PaymentMethod {
+  id           String            @id @default(cuid())
+  name         String            @unique
+  type         PaymentMethodType
+  isActive     Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  salePayments SalePayment[]
+  transactions Transaction[]
+
+  @@map("payment_methods")
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  receiptNumber Int           @unique @default(autoincrement())
+  employeeId    String
+  cashDrawerId  String?
+  total         Decimal
+  status        SaleStatus    @default(COMPLETED)
+  createdAt     DateTime      @default(now())
+  employee      Employee      @relation(fields: [employeeId], references: [id])
+  cashDrawer    CashDrawer?   @relation(fields: [cashDrawerId], references: [id])
+  saleItems     SaleItem[]
+  salePayments  SalePayment[]
+
+  @@index([createdAt])
+  @@index([employeeId])
+  @@index([cashDrawerId])
+  @@map("sales")
+}
+
+model SaleItem {
+  id        String  @id @default(cuid())
+  saleId    String
+  productId String
+  quantity  Int
+  unitPrice Decimal
+  subtotal  Decimal
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
+}
+
+model SalePayment {
+  id              String        @id @default(cuid())
+  saleId          String
+  paymentMethodId String
+  amount          Decimal
+  sale            Sale          @relation(fields: [saleId], references: [id])
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+
+  @@map("sale_payments")
+}
+
+model CashDrawer {
+  id           String           @id @default(cuid())
+  employeeId   String
+  openAmount   Decimal
+  closeAmount  Decimal?
+  closeNote    String?
+  openDate     DateTime         @default(now())
+  closeDate    DateTime?
+  status       CashDrawerStatus @default(OPEN)
+  employee     Employee         @relation(fields: [employeeId], references: [id])
+  sales        Sale[]
+  transactions Transaction[]
+
+  @@map("cash_drawers")
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  cashDrawerId    String
+  type            TransactionType
+  amount          Decimal
+  description     String?
+  paymentMethodId String?
+  createdAt       DateTime        @default(now())
+  createdById     String
+  cashDrawer      CashDrawer      @relation(fields: [cashDrawerId], references: [id])
+  paymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id])
+  createdBy       Employee        @relation(fields: [createdById], references: [id])
+
+  @@index([cashDrawerId])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model Supplier {
+  id          String     @id @default(cuid())
+  name        String
+  contactName String?
+  phone       String?
+  email       String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  purchases   Purchase[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("suppliers")
+}
+
+model Purchase {
+  id         String         @id @default(cuid())
+  supplierId String
+  total      Decimal
+  createdAt  DateTime       @default(now())
+  supplier   Supplier       @relation(fields: [supplierId], references: [id])
+  items      PurchaseItem[]
+
+  @@map("purchases")
+}
+
+model PurchaseItem {
+  id         String   @id @default(cuid())
+  purchaseId String
+  productId  String
+  quantity   Int
+  costPrice  Decimal
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@map("purchase_items")
+}
+
+model StockAlert {
+  id          String    @id @default(cuid())
+  productId   String
+  quantity    Int
+  minStock    Int
+  createdAt   DateTime  @default(now())
+  dismissedAt DateTime?
+  product     Product   @relation(fields: [productId], references: [id])
+
+  @@index([dismissedAt])
+  @@index([createdAt])
+  @@map("stock_alerts")
 }

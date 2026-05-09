@@ -1,64 +1,63 @@
-import { userRepository } from "@/server/repository/user.repository";
+import { employeeRepository } from "@/server/repository/user.repository";
 import { ApiError } from "@/utils/handlers/apiError.handler";
-import httpStatus from "http-status";
+import { status as httpStatus } from "http-status";
+import { hashPin } from "@/lib/auth";
 
-interface CreateUserDto {
-  name: string;
-  email: string;
-}
-
-interface UpdateUserDto extends Partial<CreateUserDto> {}
-
-export const userService = {
-  async create(dto: CreateUserDto) {
-    const existingUser = await userRepository.findByEmail(dto.email);
-
-    if (existingUser) {
-      throw new ApiError({
-        status: httpStatus.CONFLICT,
-        message: "El email ya está registrado",
-      });
-    }
-
-    return userRepository.create(dto);
-  },
-
+export const employeeService = {
   async findById(id: string) {
-    const user = await userRepository.findById(id);
-
-    if (!user) {
-      throw new ApiError({
-        status: httpStatus.NOT_FOUND,
-        message: "Usuario no encontrado",
-      });
+    const employee = await employeeRepository.findById(id);
+    if (!employee) {
+      throw new ApiError({ status: httpStatus.NOT_FOUND, message: "Empleado no encontrado" });
     }
-
-    return user;
-  },
-
-  async update(id: string, dto: UpdateUserDto) {
-    await this.findById(id);
-
-    if (dto.email) {
-      const existingUser = await userRepository.findByEmail(dto.email);
-
-      if (existingUser && existingUser.id !== id) {
-        throw new ApiError({
-          status: httpStatus.CONFLICT,
-          message: "El email ya está registrado",
-        });
-      }
-    }
-
-    return userRepository.update(id, dto);
-  },
-
-  async delete(id: string) {
-    await this.findById(id);
-    return userRepository.delete(id);
+    return employee;
   },
 
   async findAll(search?: string) {
-    return userRepository.findAll(search);
+    return employeeRepository.findAll(search);
+  },
+
+  async create(data: { name: string; username: string; pin: string; role: "ADMIN" | "CASHIER" }) {
+    const existing = await employeeRepository.findByUsername(data.username);
+    if (existing) {
+      throw new ApiError({ status: httpStatus.CONFLICT, message: "El nombre de usuario ya existe" });
+    }
+    const pinHash = await hashPin(data.pin);
+    return employeeRepository.create({
+      name: data.name,
+      username: data.username,
+      pinHash,
+      role: data.role,
+    });
+  },
+
+  async update(id: string, data: { name?: string; username?: string; pin?: string; role?: "ADMIN" | "CASHIER"; isActive?: boolean }) {
+    const employee = await employeeRepository.findById(id);
+    if (!employee) {
+      throw new ApiError({ status: httpStatus.NOT_FOUND, message: "Empleado no encontrado" });
+    }
+
+    if (data.username && data.username !== employee.username) {
+      const existing = await employeeRepository.findByUsername(data.username);
+      if (existing) {
+        throw new ApiError({ status: httpStatus.CONFLICT, message: "El nombre de usuario ya existe" });
+      }
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (data.name) updateData.name = data.name;
+    if (data.username) updateData.username = data.username;
+    if (data.role) updateData.role = data.role;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
+    if (data.pin) updateData.pinHash = await hashPin(data.pin);
+
+    return employeeRepository.update(id, updateData);
+  },
+
+  async delete(id: string) {
+    const employee = await employeeRepository.findById(id);
+    if (!employee) {
+      throw new ApiError({ status: httpStatus.NOT_FOUND, message: "Empleado no encontrado" });
+    }
+    return employeeRepository.update(id, { isActive: false });
   },
 };

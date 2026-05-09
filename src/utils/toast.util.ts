@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-interface ToastOptions {
+export interface ToastOptions {
   description?: string;
   duration?: number;
 }

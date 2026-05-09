@@ -1,0 +1,60 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            
+            echo "📂 Navegando al directorio de la aplicación..."
+            cd ${{ secrets.VPS_APP_PATH || '/home/$USER/generic-next' }}
+            
+            echo "🔄 Actualizando código desde GitHub..."
+            git fetch origin
+            git reset --hard origin/main
+            
+            echo "📝 Configurando variables de entorno..."
+            cat > .env.production << EOF
+            DATABASE_URL="postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@db:5432/generic_next"
+            JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+            NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}"
+            NODE_ENV="production"
+            EOF
+            
+            echo "🐳 Deteniendo contenedores anteriores..."
+            docker-compose down || true
+            
+            echo "🏗️  Construyendo nueva imagen..."
+            docker-compose build --no-cache
+            
+            echo "🚀 Levantando contenedores..."
+            docker-compose up -d
+            
+            echo "🧹 Limpiando imágenes antiguas..."
+            docker image prune -f
+            
+            echo "✅ Despliegue completado!"
+            echo "📊 Estado de los contenedores:"
+            docker-compose ps
+            
+            echo "📝 Últimos logs:"
+            docker-compose logs --tail=50 app
