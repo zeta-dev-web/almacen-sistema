@@ -5,20 +5,20 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 FROM base AS deps
-RUN corepack enable pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN corepack enable yarn
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN corepack enable pnpm
+RUN corepack enable yarn
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generar Prisma Client
-RUN pnpm prisma generate
+RUN yarn prisma generate
 
-RUN pnpm build
+RUN yarn build
 
 FROM base AS runner
 ENV NODE_ENV=production
