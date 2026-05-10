@@ -47,6 +47,14 @@ export function DashboardHeader({ sidebarOpen, onToggleSidebar, onOpenCalculator
           >
             <Menu01Icon size={20} />
           </Button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-red-500 dark:to-red-600 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-base">V</span>
+            </div>
+            <span className="text-xl font-bold text-green-600 dark:text-red-500">
+              VENTIX
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden md:block text-lg font-medium text-neutral-900 dark:text-white tabular-nums tracking-wide">

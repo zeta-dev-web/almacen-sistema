@@ -58,7 +58,7 @@ export default function LoginPage() {
               <Store01Icon size={28} className="text-red-600 dark:text-red-500" />
             </div>
             <CardTitle className="text-2xl font-bold text-neutral-900 dark:text-white">
-              Sistema POS
+              Sistema VENTIX
             </CardTitle>
             <CardDescription className="text-neutral-500 dark:text-neutral-400">
               Ingrese sus credenciales para continuar
@@ -101,7 +101,7 @@ export default function LoginPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-2">
+            <CardFooter className="flex flex-col gap-2 pt-6">
               <Button
                 type="submit"
                 className="w-full h-11 text-base font-semibold bg-red-600 hover:bg-red-700"

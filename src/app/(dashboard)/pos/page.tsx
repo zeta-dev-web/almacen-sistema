@@ -597,7 +597,7 @@ export default function POSPage() {
         {lastSale && (
           <div className="font-mono text-sm space-y-3">
             <div className="text-center border-b border-neutral-200 dark:border-neutral-800 pb-2">
-              <p className="font-bold text-neutral-900 dark:text-white">SISTEMA POS</p>
+              <p className="font-bold text-neutral-900 dark:text-white">SISTEMA VENTIX</p>
               <p className="text-neutral-500 dark:text-neutral-400">Ticket #{lastSale.receiptNumber || "—"}</p>
               <p className="text-neutral-400 dark:text-neutral-500 text-sm">{new Date(lastSale.createdAt).toLocaleString("es-AR")}</p>
             </div>

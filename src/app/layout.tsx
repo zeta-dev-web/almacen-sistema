@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sistema POS",
-  description: "Sistema integral de gestión para tienda de conveniencia",
+  title: "Sistema VENTIX",
+  description: "Sistema integral de gestión para negocios de venta",
 };
 
 export default function RootLayout({

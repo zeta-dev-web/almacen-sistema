@@ -1,4 +1,4 @@
-# Plan Integral — Sistema POS Tienda de Conveniencia
+# Plan Integral — Sistema VENTIX Tienda de ventas
 
 > **Stack:** Next.js 16 + Prisma 7 + PostgreSQL + Tailwind CSS 4 + TypeScript + Zustand + Framer Motion
 > **Dependencias base:** hugeicons-react, axios, zod, radix-ui, shadcn/ui, framer-motion, sonner, bcryptjs, date-fns, recharts
