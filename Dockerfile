@@ -24,6 +24,10 @@ RUN pnpm prisma generate
 # Build de Next.js
 RUN pnpm build
 
+# Copiar y dar permisos al script de inicio
+COPY start.sh ./
+RUN chmod +x start.sh
+
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm start"]
+CMD ["./start.sh"]
