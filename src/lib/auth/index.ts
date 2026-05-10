@@ -19,7 +19,7 @@ export async function createSession(
   role: string,
 ): Promise<string> {
   const payload: SessionPayload = { userId, role };
-  return sign(payload, JWT_SECRET, { expiresIn: "8h" });
+  return sign(payload, JWT_SECRET, { expiresIn: "12h" });
 }
 
 export async function validateSession(

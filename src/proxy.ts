@@ -21,10 +21,19 @@ export function middleware(request: NextRequest) {
   const publicPaths = ["/login", "/api/auth/login"];
   const isPublic = publicPaths.some((p) => path.startsWith(p));
 
-  // Allow all API calls from mobile (no cookie-based auth check for /api)
+  // Allow CORS for API routes
   if (path.startsWith('/api/')) {
     const response = NextResponse.next();
     response.headers.set('Access-Control-Allow-Origin', '*');
+    
+    // Verificar autenticación en APIs (excepto login)
+    if (!isPublic && !token && !request.headers.get('Authorization')) {
+      return NextResponse.json(
+        { error: 'No autorizado' },
+        { status: 401, headers: { 'Access-Control-Allow-Origin': '*' } }
+      );
+    }
+    
     return response;
   }
 
